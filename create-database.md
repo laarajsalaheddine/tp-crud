@@ -1,50 +1,40 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: May 18, 2024 at 12:59 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+# Guide de Configuration de la Base de Données
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+Ce guide fournit des instructions étape par étape pour configurer la base de données
 
+## Étapes pour Configurer la Base de Données
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+Suivez ces étapes pour créer la base de données et configurer les tables et contraintes nécessaires.
 
---
--- Database: `authentification`
---
+### 1. Créer la Base de Données
 
--- --------------------------------------------------------
+Exécutez la requête SQL suivante pour créer la base de données :
 
---
--- Table structure for table `role`
---
+```sql
+CREATE DATABASE `authentification`;
+```
 
+### 2. Créer la table role
+
+```sql
 CREATE TABLE `role` (
   `id` int(11) NOT NULL,
   `libelle` varchar(255) NOT NULL,
   `droit` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+```
 
---
--- Dumping data for table `role`
---
+### 3. Insérer une ligne dans la table des rôles
 
+```sql
 INSERT INTO `role` (`id`, `libelle`, `droit`) VALUES
 (1, 'admin', 'a:4:{s:4:\"user\";a:4:{s:6:\"create\";i:1;s:4:\"read\";i:1;s:6:\"update\";i:1;s:6:\"delete\";i:1;}s:4:\"role\";a:4:{s:6:\"create\";i:1;s:4:\"read\";i:1;s:6:\"update\";i:1;s:6:\"delete\";i:1;}s:7:\"product\";a:4:{s:6:\"create\";i:1;s:4:\"read\";i:1;s:6:\"update\";i:1;s:6:\"delete\";i:1;}s:9:\"categorie\";a:4:{s:6:\"create\";i:1;s:4:\"read\";i:1;s:6:\"update\";i:1;s:6:\"delete\";i:1;}}');
+```
 
--- --------------------------------------------------------
 
---
--- Table structure for table `users`
---
+### 4. Créer la table users
+
+```sql
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -55,18 +45,19 @@ CREATE TABLE `users` (
   `photo` longtext NOT NULL,
   `role_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+```
 
---
--- Dumping data for table `users`
---
+### 5. Insérer une ligne dans la table des users
 
+```sql
 INSERT INTO `users` (`id`, `full_name`, `username`, `email`, `password`, `photo`, `role_id`) VALUES
-(12, 'salah', 'admin', 'salah@gmail.com', '$2b$12$RZ1ftoLCV3kcoEQdFtwaau.t2J3K0a/fDGZxPcfL1unTfYdhPODB6', '', 1);
+(12, 'admin', 'admin', 'admin@gmail.com', '$2b$12$RZ1ftoLCV3kcoEQdFtwaau.t2J3K0a/fDGZxPcfL1unTfYdhPODB6', '', 1);
+```
 
---
--- Indexes for dumped tables
---
 
+### 5. Ajouter les contraints
+
+```sql
 --
 -- Indexes for table `role`
 --
@@ -88,13 +79,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -106,7 +97,4 @@ ALTER TABLE `users`
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+```

@@ -27,53 +27,56 @@ define("PATH_ROOT", "../");
 </head>
 
 <body>
+    <pre>
     <?php
     require_once PATH_ROOT . 'includes/config.php';
-
-    if (isset($_POST["login"]) && isset($_POST["username"]) && isset($_POST["password"])) {
-        $loginFlag = true;
-        $username = $_POST["username"];
-        $password = $_POST["password"];
-        $stmt = $conn->prepare("SELECT * FROM `users` u INNER JOIN `role` r on u.role_id = r.id WHERE u.username=:username");
-        $stmt->bindParam(":username", $username);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$user) {
-            $loginFlag = false;
-            goto printMessage;
-        }
-        $hashedPass = $user['password'];
-        if (!password_verify($password, $hashedPass)) {
-            $loginFlag = false;
-            goto printMessage;
+    // var_dump($_SERVER);
+    // die;
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST["login"]) && isset($_POST["username"]) && isset($_POST["password"])) {
+            $loginFlag = true;
+            $username = $_POST["username"];
+            $password = $_POST["password"];
+            $stmt = $conn->prepare("SELECT * FROM `users` u INNER JOIN `role` r on u.role_id = r.id WHERE u.username=:username");
+            $stmt->bindParam(":username", $username);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user) {
+                $loginFlag = false;
+                goto printMessage;
+            }
+            $hashedPass = $user['password'];
+            if (!password_verify($password, $hashedPass)) {
+                $loginFlag = false;
+                goto printMessage;
+            } else {
+                session_start();
+                $_SESSION['userLoggedIn'] = true;
+                $_SESSION['user'] = [
+                    "currentUser" => $user,
+                    "role" => [
+                        "libelle" => $user["libelle"],
+                        "droits" => unserialize($user['droit']),
+                    ]
+                ];
+                setcookie('connectedUserSessionId', session_id(), time() + 50000, '/');
+                header("Location: " . PATH_ROOT . "dashboard.php");
+            }
         } else {
-            session_start();
-            $_SESSION['userLoggedIn'] = true;
-            $_SESSION['user'] = [
-                "currentUser" => $user,
-                "role" => [
-                    "libelle" => $user["libelle"],
-                    "droits" => unserialize($user['droit']),
-                ]
-            ];
-            setcookie('connectedUserSessionId', session_id(), time() + 50000, '/');
-            header("Location: " . PATH_ROOT . "dashboard.php");
+            $loginFlag = false;
+            goto printMessage;
         }
-    } else {
-        $loginFlag = false;
-        goto printMessage;
+        printMessage:
+        if (!$loginFlag) {
+            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Warning!</strong> username et/ou le mot de passe incorrecte 
+          </div>';
+        }
     }
-    printMessage:
-    if (!$loginFlag) {
-        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Warning!</strong> username et/ou le mot de passe incorrecte 
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>';
-        die;
-    }
+
+
     ?>
+    </pre>
     <div class="container">
         <div class="login-form my-5">
             <div>
