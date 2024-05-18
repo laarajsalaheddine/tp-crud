@@ -44,20 +44,6 @@ if (empty($_SESSION['userLoggedIn']) || $_SESSION['userLoggedIn'] != true) {
                 </div>
             </div>
         </a>
-        <a href="<?php echo PATH_ROOT; ?>categorie/" class="text-white text-capitalize">
-            <div class="card text-white bg-info mb-3 d-inline-block" style="max-width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">Produits <i class="fas fa-cube mx-2"></i></h5>
-                </div>
-            </div>
-        </a>
-        <a href="<?php echo PATH_ROOT; ?>product/" class="text-white text-capitalize">
-            <div class="card text-white bg-success mb-3 d-inline-block" style="max-width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">Catégories <i class="fas fa-cubes mx-2"></i></h5>
-                </div>
-            </div>
-        </a>
     </div>
 
 </body>
