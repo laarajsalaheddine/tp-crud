@@ -1,5 +1,9 @@
 <?php
+session_start();
 define("PATH_ROOT", "../");
+if (isset($_SESSION['userLoggedIn']) && $_SESSION['userLoggedIn'] == true) {
+    header("location: " . PATH_ROOT . "dashboard.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +54,6 @@ define("PATH_ROOT", "../");
                 $loginFlag = false;
                 goto printMessage;
             } else {
-                session_start();
                 $_SESSION['userLoggedIn'] = true;
                 $_SESSION['user'] = [
                     "currentUser" => $user,

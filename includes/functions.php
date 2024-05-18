@@ -1,18 +1,20 @@
 <?php
-function uploadUserPhoto($files, $uploadDir = "user-photo-uploads/", $maxFileSize = 500000, $allowedExtensions = ['jpg', 'jpeg', 'png'])
+function uploadUserPhoto($file, $uploadDir = "user-photo-uploads/", $maxFileSize = 500000, $allowedExtensions = ['jpg', 'jpeg', 'png'])
 {
-    $targetFile = PATH_ROOT . $uploadDir . basename($files["fileToUpload"]["name"]);
+    // nous avons: $file, ici photo est le name dans le formulaire 
+    $uploadDir = PATH_ROOT . $uploadDir;
+    $targetFile = $uploadDir . basename($file["name"]);
     $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
     $upload = 1;
     // Check if file is an image
-    $check = getimagesize($files["fileToUpload"]["tmp_name"]);
+    $check = getimagesize($file["tmp_name"]);
     if ($check === false) {
         echo "File is not an image.";
         $upload = 0;
     }
 
     // Check file size
-    if ($files["fileToUpload"]["size"] > $maxFileSize) {
+    if ($file["size"] > $maxFileSize) {
         echo "Sorry, your file is too large.";
         $upload = 0;
     }
@@ -30,9 +32,10 @@ function uploadUserPhoto($files, $uploadDir = "user-photo-uploads/", $maxFileSiz
     if ($upload == 0) {
         return false;
     }
+
     // Move uploaded file to destination
-    if (move_uploaded_file($files["fileToUpload"]["tmp_name"], $targetFile)) {
-        return $targetFile;
+    if (move_uploaded_file($file["tmp_name"], $targetFile)) {
+        return str_replace(PATH_ROOT, "", $targetFile);
     } else {
         return false;
     }

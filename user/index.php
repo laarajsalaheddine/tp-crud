@@ -11,10 +11,6 @@ $droits = $_SESSION["user"]["role"]["droits"][MODULE];
 if ($droits['read'] === 0) {
     die("Vous ne pouvez pas consulter");
 }
-// echo "<pre>";
-// var_dump($_SESSION["user"]["role"]['droits']);
-// echo "</pre>";
-// die;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,6 +22,13 @@ if ($droits['read'] === 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="table.css">
     <title>Users</title>
+    <style>
+        .user-photo {
+            width: 70px;
+            max-width: 70px;
+            height: auto;
+        }
+    </style>
 </head>
 
 <body>
@@ -39,8 +42,6 @@ if ($droits['read'] === 0) {
     ");
     $userStatement->execute();
     $users = $userStatement->fetchAll(PDO::FETCH_ASSOC);
-
-
     ?>
     <div class="container mt-5">
         <?php if ($droits['create'] === 1): ?>
@@ -54,7 +55,7 @@ if ($droits['read'] === 0) {
                 <th>Role</th>
                 <th>Photo</th>
                 <th>Edit</th>
-                <th>Delete </th>
+                <th>Delete</th>
             </thead>
             <tbody>
                 <?php foreach ($users as $singleUser): ?>
@@ -63,10 +64,10 @@ if ($droits['read'] === 0) {
                         <td><?= $singleUser['email']; ?></td>
                         <td><?= $singleUser['username']; ?></td>
                         <td><?= $singleUser['libelle']; ?></td>
-                        <td>
+                        <td class="text-center">
                             <?php
                             if (!empty($singleUser['photo'])) {
-                                echo '<img class="user-photo" src="' . $singleUser['photo'] . '" alt="User photo">';
+                                echo '<img class="user-photo" src="' . PATH_ROOT . $singleUser['photo'] . '" alt="User photo">';
                             }
                             ?>
                         </td>

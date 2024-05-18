@@ -1,5 +1,9 @@
 <?php
+session_start();
 define("PATH_ROOT", "../");
+if (isset($_SESSION['userLoggedIn']) && $_SESSION['userLoggedIn'] == true) {
+    header("location: " . PATH_ROOT . "dashboard.php");
+}
 require PATH_ROOT . 'includes/config.php';
 require (PATH_ROOT . "includes/functions.php");
 ?>
@@ -11,7 +15,7 @@ require (PATH_ROOT . "includes/functions.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Form</title>
     <link rel="stylesheet" href="<?php echo PATH_ROOT; ?>assets/css/bootstrap.css">
-<link rel="stylesheet" href="<?php echo PATH_ROOT; ?>assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo PATH_ROOT; ?>assets/fontawesome/css/all.min.css">
 
     <style>
         .signup-form {

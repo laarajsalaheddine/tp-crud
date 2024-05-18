@@ -8,4 +8,4 @@
 </pre>
 
 ## Configurer la base de données
-[Étape par étape](./README.md)
+[Étape par étape](./create-database.md)

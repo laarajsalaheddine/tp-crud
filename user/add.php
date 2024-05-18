@@ -1,15 +1,17 @@
 <?php
+session_start();
 define("PATH_ROOT", "../");
 // le chemin de la racine
 define("MODULE", "user");
 
-require PATH_ROOT . 'includes/config.php';
-require (PATH_ROOT . "includes/functions.php");
-
-$droits = $_SESSION["user"]["role"]["droits"];
+$droits = $_SESSION["user"]["role"]["droits"][MODULE];
 if ($droits['create'] == 0) {
+    echo "<a href='" . PATH_ROOT . "'>Retourner au Home</a>";
     die("Vous n'avez pas le droit");
 }
+
+require PATH_ROOT . 'includes/config.php';
+require (PATH_ROOT . "includes/functions.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +24,7 @@ if ($droits['create'] == 0) {
     <link rel="stylesheet" href="<?php echo PATH_ROOT; ?>assets/fontawesome/css/all.min.css">
 
     <style>
-        .signup-form {
+        .ajouter-form {
             width: 400px;
             margin: 50px auto;
         }
@@ -35,42 +37,38 @@ if ($droits['create'] == 0) {
 </head>
 
 <body>
+    <?php include PATH_ROOT . "includes/navbar.php"; ?>
     <div class="container">
 
-        <div class="signup-form">
+        <div class="ajouter-form">
             <?PHP
-            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signup"])) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["create"])) {
                 $fullName = isset($_POST["fullname"]) ? $_POST["fullname"] : false;
                 $email = isset($_POST["email"]) ? $_POST["email"] : false;
                 $username = isset($_POST["username"]) ? $_POST["username"] : false;
                 $password = isset($_POST["password"]) ? $_POST["password"] : false;
                 $role_id = isset($_POST["role"]) ? $_POST["role"] : false;
                 $confirm_password = isset($_POST["confirm_password"]) ? $_POST["confirm_password"] : false;
-                $photo = uploadUserPhoto($_FILES);
+                $photo = uploadUserPhoto($_FILES['photo']);
                 if ($photo === false) {
-                    die("photo -- $photo");
+                    die("error photo -- $photo");
                 }
                 if ($password == $confirm_password && $fullName && $email && $username) {
                     $hashedPss = password_hash($password, PASSWORD_DEFAULT);
-                    $query = 'INSERT INTO `users`(`full_name`, `username`, `email`, `password`, `role_id`) VALUES (?,?,?,?,?)';
+                    $query = 'INSERT INTO `users`(`full_name`, `username`, `email`, `password`,`photo`, `role_id`) VALUES (?,?,?,?,?,?)';
                     $stmt = $conn->prepare($query);
-                    $result = $stmt->execute([$fullName, $username, $email, $hashedPss, $role_id]);
+                    $result = $stmt->execute([$fullName, $username, $email, $hashedPss, $photo, $role_id]);
                     if ($result !== true) {
-                        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <button class="btn btn-danger" type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                Erreur lors d\'ajout d\'utilisateur
-                            </div>';
-
+                        $message = "Erreur lors de l'ajout d'utilisateur";
                     } else {
-                        header("Location: " . PATH_ROOT . "login/login.php");
+                        $message = "Ajouté avec succès";
                     }
+                    echo $message;
                 }
             }
 
             ?>
-            <form action="signup.php" method="post" enctype="multipart/form-data">
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
                 <h2 class="text-center">Ajouter user</h2>
                 <div class="form-group my-2">
                     <input type="text" class="form-control" name="fullname" placeholder="Full Name" required="required">
@@ -96,16 +94,21 @@ if ($droits['create'] == 0) {
                     <select class="form-control" id="role" name="role">
                         <option value="">Select role</option>
                         <?php
-                        $roles = $conn->query("SELECT * FROM `role` WHERE 1")->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($roles as $key => $value) {
+                        try {
+                            $stmt = $conn->prepare("SELECT * FROM `role`;");
+                            $stmt->execute();
+                            $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        } catch (Exception $e) {
+                            echo "<p>" . $e->getMessage() . "<p>";
+                        }
+                        foreach ($roles as $role) {
                             echo "<option value='$role[id]'>$role[libelle]</option>";
                         }
                         ?>
                     </select>
                 </div>
                 <div class="form-group my-2">
-                    <button type="submit" name='signup' class="btn btn-primary btn-block">Sign Up</button>
-                    <span class="mx-2"> or <a href="login.php">login</a> </span>
+                    <button type="submit" name='create' class="btn btn-primary btn-block">Créer</button>
                 </div>
 
             </form>
