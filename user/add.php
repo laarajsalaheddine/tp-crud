@@ -43,12 +43,12 @@ require (PATH_ROOT . "includes/functions.php");
         <div class="ajouter-form">
             <?PHP
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["create"])) {
-                $fullName = isset($_POST["fullname"]) ? $_POST["fullname"] : false;
-                $email = isset($_POST["email"]) ? $_POST["email"] : false;
-                $username = isset($_POST["username"]) ? $_POST["username"] : false;
-                $password = isset($_POST["password"]) ? $_POST["password"] : false;
-                $role_id = isset($_POST["role"]) ? $_POST["role"] : false;
-                $confirm_password = isset($_POST["confirm_password"]) ? $_POST["confirm_password"] : false;
+                $fullName = filter_input(INPUT_POST, 'fullname', FILTER_SANITIZE_STRING);
+                $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+                $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+                $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+                $confirm_password = filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_STRING);
+                $role_id = filter_input(INPUT_POST, 'role', FILTER_VALIDATE_INT);
                 $photo = uploadUserPhoto($_FILES['photo']);
                 if ($photo === false) {
                     die("error photo -- $photo");
@@ -59,11 +59,10 @@ require (PATH_ROOT . "includes/functions.php");
                     $stmt = $conn->prepare($query);
                     $result = $stmt->execute([$fullName, $username, $email, $hashedPss, $photo, $role_id]);
                     if ($result !== true) {
-                        $message = "Erreur lors de l'ajout d'utilisateur";
+                        echo "Erreur lors de l'ajout d'utilisateur";
                     } else {
-                        $message = "Ajouté avec succès";
+                        echo "Ajouté avec succès";
                     }
-                    echo $message;
                 }
             }
 
@@ -98,11 +97,11 @@ require (PATH_ROOT . "includes/functions.php");
                             $stmt = $conn->prepare("SELECT * FROM `role`;");
                             $stmt->execute();
                             $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($roles as $role) {
+                                echo "<option value='$role[id]'>$role[libelle]</option>";
+                            }
                         } catch (Exception $e) {
                             echo "<p>" . $e->getMessage() . "<p>";
-                        }
-                        foreach ($roles as $role) {
-                            echo "<option value='$role[id]'>$role[libelle]</option>";
                         }
                         ?>
                     </select>

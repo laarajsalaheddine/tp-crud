@@ -1,31 +1,31 @@
 <?php
 session_start();
 define("PATH_ROOT", "../");
-// le chemin de la racine
 define("MODULE", "user");
-$droits = $_SESSION["user"]["role"]["droits"][MODULE];
 
-if ($droits['delete'] == 0) {
-
-    echo "<a href='" . PATH_ROOT . "'>Retourner au Home</a>";
+if (!isset($_SESSION["user"]["role"]["droits"][MODULE]) || $_SESSION["user"]["role"]["droits"][MODULE]['delete'] == 0) {
+    echo "<a href='" . htmlspecialchars(PATH_ROOT) . "'>Retourner au Home</a>";
     die("Vous n'avez pas le droit pour supprimer les users");
 }
 
-if (empty($_GET['id'])) {
-    die("il faut spécifier l'id que vous souhaiter supprimer");
+if (empty($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("Il faut spécifier un ID valide que vous souhaitez supprimer");
 }
+
 require PATH_ROOT . 'includes/config.php';
-$id = $_GET['id'];
+$id = intval($_GET['id']);
 
 $query = 'DELETE FROM `users` WHERE id=:id';
 $stmt = $conn->prepare($query);
-$stmt->bindParam(":id", $id);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $result = $stmt->execute();
-if ($result !== true) {
-    $message = "Erreur lors de la suppression";
-} else {
-    $homepage = "index.php";
-    echo "Supprimé avec succès";
-    header("Refresh: 2; url=$homepage");
-}
 
+if ($result) {
+    echo "Supprimé avec succès";
+    $homepage = "index.php";
+    header("Refresh: 2; url=$homepage");
+    exit();
+} else {
+    $errorInfo = $stmt->errorInfo();
+    echo "Erreur lors de la suppression: " . htmlspecialchars($errorInfo[2]);
+}

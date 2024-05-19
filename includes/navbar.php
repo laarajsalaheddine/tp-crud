@@ -12,12 +12,12 @@
                 <li class="nav-item active">
                     <a class="nav-link text-capitalize" href="<?php echo PATH_ROOT; ?>roles/">roles</a>
                 </li>
-                <li class="nav-item active">
+                <!-- <li class="nav-item active">
                     <a class="nav-link text-capitalize" href="<?php echo PATH_ROOT; ?>product/">produits</a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link text-capitalize" href="<?php echo PATH_ROOT; ?>categorie/">catégorie</a>
-                </li>
+                </li> -->
             </ul>
         </div>
         <form class="form-inline">
