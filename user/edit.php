@@ -150,7 +150,7 @@ require (PATH_ROOT . "includes/functions.php");
                     </select>
                 </div>
                 <div class="form-group my-2">
-                    <button type="submit" name='update' class="btn btn-primary btn-block">Créer</button>
+                    <button type="submit" name='update' class="btn btn-primary btn-block">Modifier</button>
                 </div>
 
             </form>
@@ -164,6 +164,7 @@ require (PATH_ROOT . "includes/functions.php");
     <script>
         document.getElementById("photo").addEventListener("change", function () {
             document.getElementById("user-photo").style.display = "none";
+            document.getElementById("user-photo").parentElement.style.display = "none";
         });
     </script>
 </body>
